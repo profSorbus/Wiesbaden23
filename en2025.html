@@ -42,7 +42,7 @@
             "
           />
           <p>
-            <small>Remy Marquier - Titouan Rigaud</small>
+            <small>Yacine El Bouhairy - Titouan Rigaud</small>
           </p>
           <p>
             <small>Eric Debonnel - Florian Sallaberry - Pengfei Liu - Cédric Hansen</small>
@@ -53,10 +53,10 @@
           <section data-background="images/bg-green.png">
             <h2>Checking files is :</h2>
             <ul>
-              <li class="fragment">Long</li>
-              <li class="fragment">Boring</li>
-              <li class="fragment">Unpleasant to users</li>
-              <li class="fragment">An absolute necessity</li>
+              <li class="fragment">Long for output checkers</li>
+              <li class="fragment">Somewhat boring</li>
+              <li class="fragment">Long for users</li>
+              <li class="fragment">An absolute necessity to guarantee statistical secrecy</li>
             </ul>
           </section>
 
@@ -71,7 +71,7 @@
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h2>The goal of automation</h2>
+            <h2>The goal is to automate some checks</h2>
           </section>
 
           <section data-background="images/bg-grey.png">
@@ -133,7 +133,7 @@
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h3>The simple case for excel</h3>
+            <h3>✅​ The simple case for excel ✅​</h3>
             <img
               src="images/Cas-simple.jpg"
               alt="Simple case"
@@ -143,7 +143,7 @@
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h3>The complex case</h3>
+            <h3>​⚠️​ The complex case ​⚠️​</h3>
             <img
               src="images/cas-complexe.jpg"
               alt="Complex case"
@@ -153,7 +153,7 @@
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h3>The near impossible case</h3>
+            <h3>❌​ The near impossible case ❌​</h3>
             <img
               src="images/cas-impossible.jpg"
               alt="Impossible case"
@@ -163,7 +163,7 @@
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h3>Let's assume components are correctly generated</h3>
+            <h3>⚠️​ Let's assume components are correctly generated</h3>
             <p>For the remainder of this presentation, we will assume the impossible case did not show up, but it can technically happen</p>
           </section>
 
@@ -178,10 +178,11 @@
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h3>How do we analyse this table ? Is it safe and why ?</h3>
+            <h3>How do we analyse this table ?</h3>
+            <p>Is it safe and why ?</p>
             <img
-              src="images/detect_columns.jpg"
-              alt="how to detect columns using an LLM"
+              src="images/table_simple.png"
+              alt="Is a table safe or not ?"
               class="r-stretch"
               style="margin: 0 auto 4rem auto; background: transparent"
             />
@@ -203,12 +204,12 @@
               <li>Finding positive integers -> 🐍​ Code</li>
               <li>Where are the counts of objects/persons -> ​🤖​ AI</li>
               <li>Do counts respect threshold -> 🐍​ Code</li>
-              <li>Non aggregated information -> ​🤖​ AI </li>
+              <li>Non aggregated information -> ​🤖​ AI and 🐍​ Code</li>
             </ul>
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h3>Simplified prompt</h3>
+            <h3>Simplified example of prompt</h3>
             <p>Here is a short extract of the table you need to analyse.
             <p>[...]</p>
             <p>Can you determine which of the columns contain count of individuals ? </p>
@@ -216,21 +217,33 @@
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h3>Controlling thresholds using Python</h3>
+            <h3>Based on the extract, here are the counts</h3>
+            <img
+              src="images/detect_columns.jpg"
+              alt="how to detect columns using an LLM"
+              class="r-stretch"
+              style="margin: 0 auto 4rem auto; background: transparent"
+            />
+          </section>
+
+          <section data-background="images/bg-grey.png">
+            <h3>Controlling thresholds using Python is now easier</h3>
               <img
                 src="images/detect_values.jpg"
-                alt="how to detect values using an LLM"
+                alt="how to detect values using Python code"
                 class="r-stretch"
                 style="margin: 0 auto 4rem auto; background: transparent"
               />
           </section>
 
           <section data-background="images/bg-grey.png">
-            <h3>Exemple of variables</h3>
+            <h3>Exemple of variables generated from files</h3>
             <ul>
               <li>Extension of the file</li>
               <li>Is the text readable ?</li>
               <li>Does the table contain counts of values that are not aggregated enough ?</li>
+              <li>Does the table contain individual data ?</li>
+              <li>Can any id be found in the table ?</li>
               <li>...</li>
             </ul>
             </p>
@@ -298,23 +311,54 @@
 
         <section>
           <section data-background="images/bg-green.png">
+            <h2>Limits to this approach</h2>
+          </section>
+
+          <section data-background="images/bg-grey.png">
+            <h3>Ai is not perfect</h3>
+            <p>There is a balance to be found between very large models and small ones.</p>
+            <p>Big models, with more than 15B parameters perform very well, but cost a lot.</p>
+            <p>Small models are less precise, but can infer faster, and with a smaller computing power</p>
+          </section>
+
+          <section data-background="images/bg-grey.png">
+            <h3>Current recommandations towards AI</h3>
+            <ul>
+              <li>Pick a model with at least 10B parameters</li>
+              <li>Ask it to perform small tasks, and help it with code around it</li>
+              <li>Format correctly the data to make the tasks simpler</li>
+              <li>Provide small amounts of data (maximum  15 columns and 4-5 rows)</li>
+            </ul>
+          </section>
+
+          <section data-background="images/bg-grey.png">
+            <h3>Current recommandations for the whole system</h3>
+            <ul>
+              <li>Use determinist rules to tackle with simple cases to limit risk</li>
+              <li>Labelling the training data as precisely as possible</li>
+              <li>Impose some basic rules on exports, while keeping at as open as possible for users</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
+          <section data-background="images/bg-green.png">
             <h2>Future work</h2>
-            <p>What can we do to improve ?</p>
+            <p>What can we do to improve this further?</p>
           </section>
 
           <section data-background="images/bg-grey.png">
             <h3>Continous training</h3>
             <ul>
               <li class="fragment">Detecting data shifting</li>
-              <li class="fragment">Labelling the data correctly</li>
-              <li class="fragment">New features using Large Language Models (ChatGPT like infrastructures hosted by CASD)</li>
+              <li class="fragment">New features using Large Language Models (ChatGPT like infrastructures self-hosted)</li>
             </ul>
           </section>
 
           <section data-background="images/bg-grey.png">
             <h3>Other ideas</h3>
             <ul>
-              <li class="fragment">Using more data</li>
+              <li class="fragment">Using more data to train, to vary the examples and make the model more robust</li>
               <li class="fragment">Improve the openers to solve issues related to components generation</li>
             </ul>
           </section>
