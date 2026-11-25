@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+
+  <title>Semi-automated export control</title>
+
+  <meta name="description" content="A framework to analyse exports" />
+  <meta name="author" content="Titouan Rigaud" />
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="dist/reset.css" />
+  <link rel="stylesheet" href="dist/reveal.css" />
+  <link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+
+  <!-- Theme used for syntax highlighting of code -->
+  <link rel="stylesheet" href="plugin/highlight/monokai.css" />
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section data-background="images/bg-grey.png">
+        <h3>Semi-automated export control</h3>
+        <img src="logos/casd_logo.png" alt="casd logo" class="r-stretch" style="
+              height: 250px;
+              margin: 0 auto 4rem auto;
+              background: transparent;
+              -webkit-filter: invert(1);
+              filter: invert(1);
+            " />
+        <p>
+          <small>Yacine El Bouhairi - Titouan Rigaud</small>
+        </p>
+        <p>
+          <small>Eric Debonnel - Florian Sallaberry - Pengfei Liu - Cédric Hansen</small>
+        </p>
+      </section>
+
+      <section>
+        <section data-background="images/bg-green.png">
+          <h2>A bit of context : Trusted Research Environments</h2>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>TRE with manual output checks</h3>
+          <img src="images/manual.png" alt="manual schema" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h2>How can we automate part of the checks ?</h2>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Semi-automated system</h3>
+          <img src="images/automatic.png" alt="automatic schema" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>The challenges</h3>
+          <ul>
+            <li class="fragment">Correctly opening files and extract information from them -> focus 1</li>
+            <li class="fragment">
+              Generate meaningful numerical variables from the different files -> focus 2
+            </li>
+            <li class="fragment">Train models </li>
+            <li class="fragment">Assess performance</li>
+            <li class="fragment">
+              Assemble everyting together in a single system
+            </li>
+          </ul>
+        </section>
+      </section>
+
+      <section>
+        <section data-background="images/bg-green.png">
+          <h2>Representing the files and opening them</h2>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>How do you represent a file ?</h3>
+          <img src="images/file_representation.png" alt="Files representation in components" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>The content</h3>
+          <p>
+            A file is a list of components, these components being tables, images or texts, then, we can analyse these
+            "neutral components"
+          </p>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Creating the components</h3>
+          <img src="images/Fichiers.drawio.png" alt="Files representation in components" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>✅​ The simple case for excel ✅​</h3>
+          <img src="images/Cas-simple.jpg" alt="Simple case" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>​⚠️​ The complex case ​⚠️​</h3>
+          <img src="images/cas-complexe.jpg" alt="Complex case" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>❌​ The near impossible case ❌​</h3>
+          <img src="images/cas-impossible.jpg" alt="Impossible case" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+      </section>
+
+      <section>
+        <section data-background="images/bg-green.png">
+          <h2>Generating the features</h2>
+          <p>
+            What do we analyse inside files ?
+          </p>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>How do we analyse this table ?</h3>
+          <p>Is it safe and why ?</p>
+          <img src="images/table_simple.png" alt="Is a table safe or not ?" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>The questions a human controller can ask itself :</h3>
+          <ul>
+            <li>Does the table contain columns of positive integers ?</li>
+            <li>In these columns, do some look like counts of objects/persons ?</li>
+            <li>Does these count columns contain values that are under a minimum threshold given by the producer ?</li>
+            <li>Does the table contain non aggregated information (data row by row on persons) ?</li>
+          </ul>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Using a mix of LLM and code, it is possible to answer some of these questions</h3>
+          <ul>
+            <li>Finding positive integers -> 🐍​ Code</li>
+            <li>Where are the counts of objects/persons -> ​🤖​ Local AI</li>
+            <li>Do counts respect threshold -> 🐍​ Code</li>
+            <li>Non aggregated information -> ​🤖​ Local AI and 🐍​ Code</li>
+          </ul>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Simplified example of prompt</h3>
+          <p>Here is a short extract of the table you need to analyse.
+          <p>[...]</p>
+          <p>Can you determine which of the columns contain count of individuals ? </p>
+          </p>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Based on the extract, here are the counts</h3>
+          <img src="images/detect_columns.jpg" alt="how to detect columns using an LLM" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Controlling thresholds using Python is now easier</h3>
+          <img src="images/detect_values.jpg" alt="how to detect values using Python code" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Exemple of variables generated from files</h3>
+          <ul>
+            <li>Extension of the file</li>
+            <li>Is the text readable ?</li>
+            <li>Does the table contain counts of values that are not aggregated enough ?</li>
+            <li>Does the table contain individual data ?</li>
+            <li>Can any id be found in the table ?</li>
+            <li>...</li>
+          </ul>
+          </p>
+        </section>
+      </section>
+
+      <section>
+        <section data-background="images/bg-green.png">
+          <h2>Limits to this approach</h2>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Ai is not perfect</h3>
+          <p>There is a balance to be found between very large models and small ones.</p>
+          <p>Big models, with more than 15B parameters perform very well, but cost a lot.</p>
+          <p>Small models are less precise, but can infer faster, and with a smaller computing power</p>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Current recommandations towards AI</h3>
+          <ul>
+            <li>Pick a model with at least 10B parameters</li>
+            <li>Ask it to perform small tasks, and help it with code around it -> makes the workflow more reproducible
+              and transparent</li>
+            <li>Format correctly the data to make the tasks simpler</li>
+            <li>Provide small amounts of data (maximum 15 columns and 4-5 rows)</li>
+          </ul>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Current recommandations for the whole system</h3>
+          <ul>
+            <li>Use determinist rules to tackle with simple cases to limit risk</li>
+            <li>Labelling the training data as precisely as possible</li>
+            <li>Impose some basic rules on exports, while keeping at as open as possible for users</li>
+          </ul>
+        </section>
+      </section>
+
+      <section>
+        <section data-background="images/bg-green.png">
+          <h2>Future work</h2>
+          <p>What can we do to improve this further?</p>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Continous training</h3>
+          <ul>
+            <li class="fragment">Detecting data shifting</li>
+            <li class="fragment">New features using Large Language Models (ChatGPT like infrastructures self-hosted)
+            </li>
+          </ul>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>Other ideas</h3>
+          <ul>
+            <li class="fragment">Using more data to train, to vary the examples and make the model more robust</li>
+            <li class="fragment">Improve the openers to solve issues related to components generation</li>
+          </ul>
+        </section>
+
+        <section data-background="images/bg-grey.png">
+          <h3>One last thing</h3>
+          <p>Building your model on content based features allows to create useful reports :</p>
+          <img src="images/report.png" alt="Reporting technology" class="r-stretch"
+            style="margin: 0 auto 4rem auto; background: transparent" />
+        </section>
+      </section>
+
+      <section>
+        <section data-background="images/bg-green.png">
+          <h2>Merci !</h2>
+          <p>Contact : titouan.rigaud@casd.eu</p>
+        </section>
+      </section>
+    </div>
+  </div>
+
+  <script src="dist/reveal.js"></script>
+  <script src="plugin/zoom/zoom.js"></script>
+  <script src="plugin/notes/notes.js"></script>
+  <script src="plugin/search/search.js"></script>
+  <script src="plugin/markdown/markdown.js"></script>
+  <script src="plugin/highlight/highlight.js"></script>
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      center: true,
+      hash: true,
+
+      plugins: [
+        RevealZoom,
+        RevealNotes,
+        RevealSearch,
+        RevealMarkdown,
+        RevealHighlight,
+      ],
+    });
+  </script>
+</body>
+
+</html>
